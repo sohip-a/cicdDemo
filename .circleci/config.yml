@@ -8,26 +8,24 @@ jobs:
       - image: circleci/node:13.8.0
     environment:
       envTest : << pipeline.id >>
-      envTest2: "SOHIP"
     steps:
-      - run: echo hello
-      - run: echo $envTest
-      - run: echo $envTest2
+      - run: echo "Phil" >> ~/output.txt
+      - run: echo "$envTest" >> ~/output.txt
+      - save_cache:
+          key: myCache1
+          paths:
+            - ~/output.txt
+      - run: cat ~/output.txt
   print_world:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - run: echo world
+      - restore_cache:
+          key: myCache1
+      - run: cat ~/output.txt
 workflows:
   # Name the workflow "welcome"
   welcome:
-    # Run the welcome/run job in its own container
-    jobs:
-      - print_hello
-      - print_world:
-          requires:
-            - print_hello
-  welcome2:
     # Run the welcome/run job in its own container
     jobs:
       - print_hello
