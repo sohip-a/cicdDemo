@@ -3,20 +3,34 @@ version: 2.1
 
 # Orchestrate or schedule a set of jobs
 jobs:
-  HelloWorld:
+  print_hello:
+    docker:
+      - image: circleci/node:13.8.0
+    environment:
+      envTest : << pipeline.id >>
+      envTest2: "SOHIP"
+    steps:
+      - run: echo hello
+      - run: echo $envTest
+      - run: echo $envTest2
+  print_world:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - run: echo Hello World
-  printMyName:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - run: echo AmanyHegazy
+      - run: echo world
 workflows:
   # Name the workflow "welcome"
   welcome:
     # Run the welcome/run job in its own container
     jobs:
-      - HelloWorld
-      - printMyName
+      - print_hello
+      - print_world:
+          requires:
+            - print_hello
+  welcome2:
+    # Run the welcome/run job in its own container
+    jobs:
+      - print_hello
+      - print_world:
+          requires:
+            - print_hello
